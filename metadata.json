@@ -1,5 +1,5 @@
 {
-  "name": "SheetMaster AI",
-  "description": "A powerful wrapper for Google Sheets that allows viewing and editing shared sheets alongside an intelligent AI assistant for formulas and data analysis.",
+  "name": "SheetMaster",
+  "description": "A powerful wrapper for Google Sheets that allows viewing and editing shared sheets in a focused, distraction-free environment.",
   "requestFramePermissions": []
 }

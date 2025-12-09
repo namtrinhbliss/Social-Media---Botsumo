@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Sheet, Menu, MessageSquare, Plus, Clock, FileSpreadsheet, ChevronRight, Layout } from 'lucide-react';
+import { Sheet, Menu, Zap, Plus, Clock, FileSpreadsheet, ChevronRight, Layout } from 'lucide-react';
 import { SheetViewer } from './components/SheetViewer';
-import { AIAssistant } from './components/AIAssistant';
 import { SheetHistoryItem, ViewMode } from './types';
 
 export default function App() {
   const [currentUrl, setCurrentUrl] = useState<string>('');
   const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.Welcome);
   const [history, setHistory] = useState<SheetHistoryItem[]>([]);
-  const [isAiOpen, setIsAiOpen] = useState(false);
   const [inputUrl, setInputUrl] = useState('');
 
   // Load history from local storage on mount with Date hydration
@@ -60,7 +58,6 @@ export default function App() {
 
   const handleReturnHome = () => {
     setViewMode(ViewMode.Welcome);
-    setIsAiOpen(false);
   };
 
   return (
@@ -75,25 +72,9 @@ export default function App() {
             <div className="bg-green-600 text-white p-1.5 rounded-md shadow-sm group-hover:scale-105 transition-transform">
               <FileSpreadsheet size={20} />
             </div>
-            <span className="font-bold text-lg tracking-tight text-gray-800">SheetMaster<span className="text-green-600">AI</span></span>
+            <span className="font-bold text-lg tracking-tight text-gray-800">SheetMaster</span>
           </button>
         </div>
-
-        {viewMode === ViewMode.Sheet && (
-           <div className="flex items-center gap-3">
-             <button
-               onClick={() => setIsAiOpen(!isAiOpen)}
-               className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all shadow-sm border ${
-                 isAiOpen 
-                   ? 'bg-green-50 text-green-700 border-green-200 ring-2 ring-green-100' 
-                   : 'bg-white text-gray-700 border-gray-200 hover:border-green-300 hover:text-green-600'
-               }`}
-             >
-               <MessageSquare size={18} className={isAiOpen ? 'fill-current' : ''} />
-               <span>AI Assistant</span>
-             </button>
-           </div>
-        )}
       </header>
 
       {/* Main Content Area */}
@@ -110,7 +91,7 @@ export default function App() {
                 </h1>
                 <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                   View and edit shared Google Sheets in a focused environment. 
-                  Use the built-in AI assistant to generate complex formulas, scripts, and analyze data instantly.
+                  Manage your data efficiently without distractions.
                 </p>
                 
                 <div className="max-w-xl mx-auto relative group">
@@ -174,9 +155,9 @@ export default function App() {
                   desc="A clean interface focused purely on your data editing experience."
                 />
                 <FeatureCard 
-                  icon={<MessageSquare className="text-purple-500" />}
-                  title="AI Formula Expert"
-                  desc="Stuck? Ask the AI sidebar for VLOOKUPs, REGEX, or Query help."
+                  icon={<Zap className="text-purple-500" />}
+                  title="Instant Access"
+                  desc="Load your sheets instantly without navigating through Drive folders."
                 />
                 <FeatureCard 
                   icon={<Sheet className="text-green-500" />}
@@ -190,7 +171,6 @@ export default function App() {
         ) : (
           <div className="flex-1 flex relative">
             <SheetViewer url={currentUrl} />
-            <AIAssistant isOpen={isAiOpen} onClose={() => setIsAiOpen(false)} />
           </div>
         )}
       </div>

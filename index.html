@@ -7,6 +7,15 @@
     <meta name="theme-color" content="#16a34a" />
     <title>SheetMaster AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      // Polyfill for process.env to prevent "process is not defined" crash in browser
+      window.process = {
+        env: {
+          NODE_ENV: 'production',
+          API_KEY: '' // Vercel env vars are injected at build time, but this prevents runtime crash
+        }
+      };
+    </script>
     <script type="importmap">
     {
       "imports": {
@@ -21,5 +30,7 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Entry point for the React Application -->
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>

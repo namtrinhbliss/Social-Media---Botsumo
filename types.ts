@@ -1,11 +1,3 @@
-export interface ChatMessage {
-  id: string;
-  role: 'user' | 'model';
-  text: string;
-  timestamp: Date;
-  isError?: boolean;
-}
-
 export interface SheetHistoryItem {
   id: string;
   url: string;

@@ -11,14 +11,22 @@ export default function App() {
   const [isAiOpen, setIsAiOpen] = useState(false);
   const [inputUrl, setInputUrl] = useState('');
 
-  // Load history from local storage on mount
+  // Load history from local storage on mount with Date hydration
   useEffect(() => {
     const saved = localStorage.getItem('sheet_history');
     if (saved) {
       try {
-        setHistory(JSON.parse(saved));
+        const parsedData = JSON.parse(saved);
+        // Ensure date strings are converted back to Date objects
+        const hydratedData: SheetHistoryItem[] = parsedData.map((item: any) => ({
+          ...item,
+          lastAccessed: new Date(item.lastAccessed)
+        }));
+        setHistory(hydratedData);
       } catch (e) {
         console.error("Failed to parse history", e);
+        // If parsing fails, clear corrupted data
+        localStorage.removeItem('sheet_history');
       }
     }
   }, []);
@@ -39,10 +47,11 @@ export default function App() {
     const newItem: SheetHistoryItem = {
       id: Date.now().toString(),
       url,
-      title: `Sheet ${new Date().toLocaleTimeString()}`, // In a real app, we'd try to fetch metadata or let user name it
+      title: `Sheet ${new Date().toLocaleTimeString()}`, 
       lastAccessed: new Date()
     };
     
+    // Update history: remove duplicates of current url, add new to top, limit to 10
     const newHistory = [newItem, ...history.filter(h => h.url !== url)].slice(0, 10);
     setHistory(newHistory);
     localStorage.setItem('sheet_history', JSON.stringify(newHistory));

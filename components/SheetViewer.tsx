@@ -1,11 +1,13 @@
-import React from 'react';
-import { ExternalLink } from 'lucide-react';
+import React, { useState } from 'react';
+import { ExternalLink, Loader2 } from 'lucide-react';
 
 interface SheetViewerProps {
   url: string;
 }
 
 export const SheetViewer: React.FC<SheetViewerProps> = ({ url }) => {
+  const [isLoading, setIsLoading] = useState(true);
+
   // Helper to extract Sheet ID and construct clean embed URL
   const getEmbedUrl = (rawUrl: string): string => {
     try {
@@ -13,10 +15,9 @@ export const SheetViewer: React.FC<SheetViewerProps> = ({ url }) => {
       const match = rawUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
       if (match && match[1]) {
         const id = match[1];
-        // We force 'edit' mode in the URL parameters.
-        // Google Sheets handles permissions internally. 
-        // If the user has edit rights, this URL will allow editing.
-        return `https://docs.google.com/spreadsheets/d/${id}/edit?usp=sharing&rm=demo`; 
+        // We use the standard edit URL to ensure the user has access to the full toolbar (File, Edit, View, etc.)
+        // usp=sharing ensures the sharing context is maintained.
+        return `https://docs.google.com/spreadsheets/d/${id}/edit?usp=sharing`; 
       }
       return rawUrl;
     } catch (e) {
@@ -28,6 +29,17 @@ export const SheetViewer: React.FC<SheetViewerProps> = ({ url }) => {
 
   return (
     <div className="flex-1 flex flex-col h-full bg-gray-100 relative overflow-hidden">
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-20">
+            <div className="flex flex-col items-center gap-3 animate-pulse">
+                <Loader2 className="w-10 h-10 text-green-600 animate-spin" />
+                <p className="text-gray-500 font-medium">Loading Spreadsheet...</p>
+            </div>
+        </div>
+      )}
+
+      {/* External Link Button */}
       <div className="absolute top-4 right-4 z-10">
         <a 
           href={embedUrl} 
@@ -38,11 +50,15 @@ export const SheetViewer: React.FC<SheetViewerProps> = ({ url }) => {
           Open in New Tab <ExternalLink size={12} />
         </a>
       </div>
+      
+      {/* Google Sheet Iframe */}
       <iframe
         src={embedUrl}
         title="Google Sheet"
         className="w-full h-full border-0"
-        allow="clipboard-write" // Important for copy-paste inside the sheet
+        allow="clipboard-write; autoplay; encrypted-media; picture-in-picture"
+        allowFullScreen
+        onLoad={() => setIsLoading(false)}
       />
     </div>
   );
